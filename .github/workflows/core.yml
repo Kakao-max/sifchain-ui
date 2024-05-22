@@ -1,0 +1,43 @@
+name: Frontend core tests
+
+on:
+  pull_request:
+  workflow_call:
+    secrets:
+      GHCR_TOKEN:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+          cache: yarn
+          cache-dependency-path: "**/yarn.lock"
+
+      - name: Log into registry
+        run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Pull instant stack image
+        run: docker pull $(cat scripts/latest)
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Test Frontend
+        run: yarn test
+        env:
+          CI: true
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
+        if: ${{ always() }}
+        with:
+          directory: ./core/coverage
+          verbose: true

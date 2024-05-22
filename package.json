@@ -1,0 +1,58 @@
+{
+  "name": "sifchain-ui",
+  "version": "2.14.34",
+  "private": true,
+  "license": "UNLICENSED",
+  "packageManager": "yarn@3.2.0",
+  "scripts": {
+    "bump": "cd ./app && yarn bump",
+    "advance": "zx ./scripts/advance.mjs",
+    "build": "VITE_APP_VERSION=$(git rev-parse HEAD) VITE_APP_SHA=$npm_package_version yarn turbo run build",
+    "dev": "yarn turbo run dev --parallel",
+    "e2e": "zx ./scripts/e2e.mjs",
+    "lint": "zx ./scripts/lint.mjs",
+    "postinstall": "patch-package && husky install && yarn workspace @sifchain/sdk run build",
+    "stack": "zx ./scripts/stack.mjs",
+    "start": "zx ./scripts/start.mjs",
+    "docs": "serve -p 4444 ../docs",
+    "test": "zx ./scripts/test.mjs --tag feature__cosmos-0.42",
+    "erc20:add-token": "zx ./scripts/add-or-update-erc20-token.mjs"
+  },
+  "devDependencies": {
+    "@types/coingecko-api": "^1.0.10",
+    "arg": "^5.0.2",
+    "concurrently": "^7.5.0",
+    "ganache-cli": "^6.12.2",
+    "husky": "^7.0.4",
+    "patch-package": "^6.5.0",
+    "pretty-quick": "^3.1.3",
+    "ramda": "^0.28.0",
+    "serve": "^14.0.1",
+    "truffle": "^5.6.3",
+    "turbo": "^1.6.3",
+    "untildify": "^4.0.0",
+    "vercel": "^28.4.12",
+    "wait-on": "^6.0.1",
+    "wscat": "^5.2.0",
+    "zx": "^7.1.1"
+  },
+  "workspaces": {
+    "packages": [
+      "core",
+      "app",
+      "e2e",
+      "wallet-keplr",
+      "wallet-terra-station",
+      "wallet-metamask",
+      "ui"
+    ]
+  },
+  "resolutions": {
+    "url-parse": "1.5.0",
+    "@zondax/filecoin-signing-tools": "^0.20.1"
+  },
+  "dependencies": {
+    "codecov": "^3.8.3",
+    "prettier": "^2.6.2"
+  }
+}

@@ -1,0 +1,37 @@
+.vscode
+.idea
+.coverage.txt
+frontend/node_modules
+frontend/dist
+frontend/.cache
+.live*
+.DS_Store
+.testCoverage.txt
+.environments
+deploy/networks
+log/*.log
+.env
+.backups
+.ssh
+anchore-reports
+stats.html
+
+.vercel
+nohup.out
+relayerdb
+smart-contracts/*
+node_modules
+.vercel
+.envrc
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Turbo
+.turbo

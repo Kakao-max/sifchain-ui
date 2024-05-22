@@ -1,0 +1,61 @@
+{
+  "$schema": "./_assets.schema.json",
+  "assets": [
+    {
+      "symbol": "rowan",
+      "decimals": 18,
+      "name": "Rowan",
+      "imageUrl": "./images/siflogo.png",
+      "network": "sifchain",
+      "displaySymbol": "rowan",
+      "homeNetwork": "sifchain"
+    },
+    {
+      "decimals": 6,
+      "imageUrl": "https://assets.coingecko.com/coins/images/325/thumb/Tether-logo.png?1598003707",
+      "name": "Tether USDT",
+      "network": "sifchain",
+      "symbol": "cusdt",
+      "displaySymbol": "usdt",
+      "homeNetwork": "ethereum"
+    },
+    {
+      "imageUrl": "https://assets.coingecko.com/coins/images/17103/small/DINO.png?1626244014",
+      "name": "DinoSwap",
+      "displaySymbol": "DINO",
+      "symbol": "cdino",
+      "network": "sifchain",
+      "homeNetwork": "ethereum",
+      "decimals": 18
+    },
+    {
+      "decimals": 18,
+      "imageUrl": "https://assets.coingecko.com/coins/images/12681/small/UST.png?1601612407",
+      "name": "Terra USD",
+      "network": "sifchain",
+      "displaySymbol": "UST (ERC-20)",
+      "symbol": "cust",
+      "homeNetwork": "ethereum"
+    },
+    {
+      "symbol": "catk",
+      "displaySymbol": "ATK",
+      "decimals": 18,
+      "imageUrl": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
+      "name": "Apple Coin",
+      "address": "0xB529f14AA8096f943177c09Ca294Ad66d2E08b1f",
+      "network": "ethereum",
+      "homeNetwork": "ethereum"
+    },
+    {
+      "symbol": "ctest",
+      "displaySymbol": "TEST",
+      "decimals": 6,
+      "imageUrl": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
+      "name": "Test Coin",
+      "address": "0xB529f14AA8096f943177c09Ca294Ad66d2E08b1f",
+      "network": "ethereum",
+      "homeNetwork": "ethereum"
+    }
+  ]
+}

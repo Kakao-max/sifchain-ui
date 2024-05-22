@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "github": {
+    "enabled": true
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://sifchain.network",
+      "has": [
+        {
+          "type": "header",
+          "key": "host",
+          "value": "dex.sifchain.finance"
+        }
+      ],
+      "permanent": false
+    }
+  ]
+}

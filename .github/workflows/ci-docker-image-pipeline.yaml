@@ -1,0 +1,121 @@
+name: "Frontend: Docker: Build"
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  test_build_push:
+    runs-on: ubuntu-latest
+    env:
+      image: "sifchain/frontend"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+          cache: yarn
+          cache-dependency-path: "**/yarn.lock"
+
+      - name: Set env vars
+        shell: bash
+        run: |
+          set +x
+          BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})
+          TAG_NAME=$(git tag --points-at HEAD)
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "VITE_APP_VERSION=$(cat app/package.json | jq '.version' | tr -d '"')" >> $GITHUB_ENV
+          echo "VITE_APP_SHA=$GITHUB_SHA" >> $GITHUB_ENV
+          if [[ $BRANCH_NAME == 'master' ]]
+          then
+            echo "SUBDOMAIN=staging" >> $GITHUB_ENV
+            echo "VITE_APP_DEPLOYMENT=production" >> $GITHUB_ENV
+          elif [[ "$TAG_NAME" != '' ]]
+          then
+            echo "SUBDOMAIN=testnet" >> $GITHUB_ENV
+            echo "VITE_APP_DEPLOYMENT=staging" >> $GITHUB_ENV
+          else
+            echo "SUBDOMAIN=devnet" >> $GITHUB_ENV
+            echo "VITE_APP_DEPLOYMENT=develop" >> $GITHUB_ENV
+          fi
+          echo $(cat $GITHUB_ENV)
+
+      - name: "Install Dependencies & Build Frontend Application"
+        run: |
+          set +x
+          cd app/
+          yarn
+          yarn build
+
+      - name: "Build & Push Docker Image"
+        shell: bash
+        env:
+          DOCKER_USERNAME: "${{ secrets.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+        run: |
+          set +x
+
+          mv Dockerfile.staticonly Dockerfile
+
+          docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}
+
+          DOCKER_TAG=$(cat app/package.json | jq .version | sed 's/"//g')
+
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+
+          docker build -t ${image}:${DOCKER_TAG} .
+
+          docker push ${image}:${DOCKER_TAG}
+
+      # - name: "Forble Tag Update"
+      #   shell: bash
+      #   env:
+      #     FORBLE_USERNAME: "${{ secrets.FORBLE_USERNAME }}"
+      #     FORBLE_PASSWORD: "${{ secrets.FORBLE_PASSWORD }}"
+      #   run: |
+      #     set +x
+      #     data_payload="{\"parameters\":{\"tag\":\"${DOCKER_TAG}\"}}"
+      #     echo "${data_payload}"
+      #     curl -X POST -H "Content-Type: application/json" -d "${data_payload}" https://sifchain-deploy.forbole.com/akash/deploysifchain -u "${FORBLE_USERNAME}:${FORBLE_PASSWORD}"
+
+      - name: "ZIP Release Contents"
+        shell: bash
+        run: |
+          set +x
+          zip -r release-${DOCKER_TAG}.zip app/dist
+          change_log=$(cat app/CHANGELOG.md)
+          echo "change_log=$(echo ${change_log} | tr -d '\n' | sed -e 's/\#//g')" >> ${GITHUB_ENV}
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.DOCKER_TAG }}
+          release_name: Release-${{ env.DOCKER_TAG }}
+          body: |
+            Change Log:
+              ${{ env.change_log }}
+          draft: true
+          prerelease: false
+
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release-${{ env.DOCKER_TAG }}.zip
+          asset_name: release-${{ env.DOCKER_TAG }}.zip
+          asset_content_type: application/zip
+
+      - uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
