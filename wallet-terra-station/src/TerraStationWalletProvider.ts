@@ -186,15 +186,7 @@ export class TerraStationWalletProvider extends CosmosWalletProvider {
     }
   }
 
-  static create(context: WalletProviderContext) {}
-  constructor(public context: WalletProviderContext) {
-    super(context);
-  }
+  
 
-  async getSendingSigner(
-    chain: Chain,
-  ): Promise<OfflineSigner & OfflineDirectSigner> {
-    // TODO: move this over to exclusively Terra
-    return KeplrWalletProvider.prototype.getSendingSigner.call(this, chain);
-  }
+  
 }
