@@ -186,7 +186,10 @@ export class TerraStationWalletProvider extends CosmosWalletProvider {
     }
   }
 
-  
+  static create(context: WalletProviderContext) {}
+  constructor(public context: WalletProviderContext) {
+    super(context);
+  }
 
   
 }
