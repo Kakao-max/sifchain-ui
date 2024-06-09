@@ -16,7 +16,9 @@ export class MetamaskWalletProvider extends Web3WalletProvider {
     return web3.currentProvider as MetaMaskInpageProvider;
   }
 
-
+  async isInstalled(chain: Chain) {
+    return !!(await this.getMetamaskProvider());
+  }
 
 
 
