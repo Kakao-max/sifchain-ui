@@ -36,5 +36,29 @@ export class MetamaskWalletProvider extends Web3WalletProvider {
     return accounts.length > 0;
   }
 
+  async suggestEthereumAsset(
+    asset: IAsset,
+    loadTokenIconUrl: (
+      asset: IAsset,
+    ) => Promise<string | undefined> | string | undefined,
+    contractAddress: string | undefined = asset.address,
+  ): Promise<boolean> {
+    if (!contractAddress) throw new Error("No contract address supplied");
 
+    const metamask = await this.getMetamaskProvider();
+    const wasAdded = await metamask.request({
+      method: "wallet_watchAsset",
+      params: {
+        // @ts-ignore
+        type: "ERC20",
+        options: {
+          address: contractAddress,
+          symbol: asset.displaySymbol.toUpperCase(),
+          decimals: asset.decimals,
+          image: await loadTokenIconUrl(asset),
+        },
+      },
+    });
+    return !!wasAdded;
+  }
 }
