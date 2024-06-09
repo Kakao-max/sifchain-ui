@@ -30,7 +30,11 @@ export class MetamaskWalletProvider extends Web3WalletProvider {
     return address;
   }
 
-
+  async hasConnected(chain: Chain): Promise<boolean> {
+    const web3 = await this.getWeb3();
+    const accounts = await web3.eth.getAccounts();
+    return accounts.length > 0;
+  }
 
 
 }
